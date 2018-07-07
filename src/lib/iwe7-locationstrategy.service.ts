@@ -1,5 +1,5 @@
 import { PlatformLocation, LocationStrategy, Location, LocationChangeListener } from "@angular/common";
-import { InjectionToken, Optional, Inject, Injectable } from "@angular/core";
+import { InjectionToken, Optional, Inject, Injectable, Injector } from "@angular/core";
 export function DefaultIwe7LocationStrategyConfig() {
   return '/do';
 }
@@ -16,12 +16,14 @@ export class Iwe7LocationStrategy extends LocationStrategy {
   queryParams: { [key: string]: any };
   constructor(
     private _platformLocation: PlatformLocation,
+    public injector: Injector,
     @Optional() @Inject(Iwe7LocationStrategyConfig) private config?: string
   ) {
     super();
   }
   path(includeHash?: boolean): string {
     this.queryParams = this.parseUrl(this._platformLocation.search);
+    this.config = this.injector.get(Iwe7LocationStrategyConfig);
     const configs = this.config.split('/');
     const path = this.queryStringToPath(configs);
     const hash = this._platformLocation.hash;
@@ -60,6 +62,7 @@ export class Iwe7LocationStrategy extends LocationStrategy {
   }
   prepareExternalUrl2(internal: string, queryParams: string): string {
     const internals = internal.split('/');
+    this.config = this.injector.get(Iwe7LocationStrategyConfig);
     const configs = this.config.split('/');
     const urls = {};
     configs.map((config: string, index: number) => {
