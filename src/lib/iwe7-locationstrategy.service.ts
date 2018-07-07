@@ -31,7 +31,9 @@ export class Iwe7LocationStrategy extends LocationStrategy {
   }
   private queryStringToPath(configs: string[]) {
     const res: string[] = configs.map(name => {
-      return this.queryParams[name];
+      if (this.queryParams[name]) {
+        return this.queryParams[name];
+      }
     });
     return res.join('/');
   }
@@ -43,7 +45,7 @@ export class Iwe7LocationStrategy extends LocationStrategy {
       const obj = {};
       const value = item.split("=")[0];
       const key = item.split("=")[1];
-      result[value] = key;
+      result[value] = key ? key : '';
     });
     return result;
   }
@@ -51,7 +53,7 @@ export class Iwe7LocationStrategy extends LocationStrategy {
     const url = [];
     for (const key in this.queryParams) {
       if (key !== '') {
-        url.push(`${key}=${this.queryParams[key]}`);
+        url.push(`${key}=${this.queryParams[key] ? this.queryParams[key] : ''}`);
       }
     }
     const res = url.join('&');
